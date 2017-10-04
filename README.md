@@ -6,23 +6,25 @@ of our ICLR 2016 paper (paper homepage: http://arxiv.org/abs/1511.05879).
 <img src="http://cmp.felk.cvut.cz/~toliageo/images/thumbs/aml2.png" height="250"/>
 
 ## What is it?
+This code implements
 
-This code implements 
-a) MAC and R-MAC image representation
-b) Image retrieval based on MAC and R-MAC
-c) Localization re-ranking (AML) and query expansion (QE)
-d) Evaluation on Oxford5k and Paris6k test datasets
+1) MAC and R-MAC image representation
+2) Image retrieval based on MAC and R-MAC
+3) Localization re-ranking (AML) and query expansion (QE)
+4) Evaluation on Oxford5k and Paris6k test datasets
 
 ## Citation
 
+```
 @conference{tolias2016rmac,
   title={Particular object retrieval with integral max-pooling of CNN activations},
   author={Tolias, Giorgos and Sicre, Ronan and J{\'e}gou, Herv{\'e}},
   journal={International Conference on Learning Representations},
   year={2016}
 }
+```
 
-##Prerequisites
+## Prerequisites
 
 The prerequisites are:
 - Images of Oxford5k and Paris6k datasets: http://www.robots.ox.ac.uk/~vgg/data/
@@ -32,11 +34,12 @@ The prerequisites are:
 
 - Pre-trained CNN models. In our paper we have used AlexNet and VGG16. The mat files containing the models are downloaded in the code. The current files on matconvnet website are slightly different from the ones we used (older versions downloaded from matconvnet website).
 
-##Execution
+## Execution
 
 1) Run the following script
+```
 >> test
-
+```
 
 ## License
 

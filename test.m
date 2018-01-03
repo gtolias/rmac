@@ -5,8 +5,12 @@
 %
 % Authored by G. Tolias, 2015. 
 
-addpath('./')
-mex aml.c; 													    % compile MEX for localization
+addpath('helpers');
+addpath('yael');
+
+if exist('aml') ~= 3
+	mex -compatibleArrayDims aml.c
+end
 
 data_folder = '/datasets/'; % oxford5k/ and paris6k/ should be in here
 
@@ -32,12 +36,11 @@ rf_step 					= 3;		% fixed step for refinement
 rf_iter 					= 5;		% number of iterations of refinement
 nqe 						= 5;		% number of images to be used for QE
 
-use_gpu	 				= 0;		% use GPU to get CNN responses
+use_gpu	 				= 1;		% use GPU to get CNN responses
 
 % choose pre-trained CNN model
 modelfn = 'imagenet-caffe-alex.mat'; ; lid = 15;				% use AlexNet
 % modelfn = 'imagenet-vgg-verydeep-16.mat'; ; lid = 31;		% use VGG
-
 
 % the models used in our paper are downloaded
 % current models on matconvnet site are slightly different
@@ -46,11 +49,18 @@ if exist(modelfn, 'file') ~= 2
 end
 
 % matconvnet is a prerequisite
-if ~exist('vl_simplenn')
-	system('wget http://www.vlfeat.org/matconvnet/download/matconvnet-1.0-beta15.tar.gz');
-	system('tar -xzvf matconvnet-1.0-beta15.tar.gz');
-	run matconvnet-1.0-beta15/matlab/vl_compilenn   % compile for CPU (but you'd better compile for GPU)
-	run matconvnet-1.0-beta15/matlab/vl_setupnn.m
+% run vl_setupnn for your installation to avoid downloading and compiling again
+if exist('vl_nnconv') ~= 3
+	if ~exist('matconvnet-1.0-beta25')
+		system('wget http://www.vlfeat.org/matconvnet/download/matconvnet-1.0-beta25.tar.gz');
+		system('tar -xzvf matconvnet-1.0-beta25.tar.gz');
+	end
+	cd matconvnet-1.0-beta25/matlab/
+	if numel(dir(fullfile('mex', 'vl_nnconv.mex*'))) == 0
+		vl_compilenn('verbose', 1, 'enableGPU', 1, 'cudaRoot', '/usr/local/cuda-8.0');
+	end
+	vl_setupnn;
+	cd ../../
 end
 
 net = load(modelfn);
@@ -58,6 +68,11 @@ net.layers = {net.layers{1:lid}}; % remove fully connected layers
 if use_gpu
 	net = vl_simplenn_move(net, 'gpu') ;
 end
+
+% compatibility with matconvnet-1.0-beta25 (otherwise tested with matconvnet-1.0-beta15)
+for i=1:numel(net.layers), if strcmp(net.layers{i}.type,'conv'), net.layers{i}.dilate=[1 1]; net.layers{i}.opts={}; end, end
+for i=1:numel(net.layers), if strcmp(net.layers{i}.type,'relu'), net.layers{i}.leak=0; end, end
+for i=1:numel(net.layers), if strcmp(net.layers{i}.type,'pool'), net.layers{i}.opts={}; end, end
 
 im_fn_test = cellfun(@(x) [im_folder_test, x, '.jpg'], gnd_test.imlist, 'un', 0);
 im_fn_train = cellfun(@(x) [im_folder_train, x, '.jpg'], gnd_train.imlist, 'un', 0);

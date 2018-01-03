@@ -29,10 +29,12 @@ This code implements
 The prerequisites are:
 - Images of Oxford5k and Paris6k datasets: http://www.robots.ox.ac.uk/~vgg/data/
 
-- MatConvNet MATLAB toolbox 1.0-beta15 is automatically downloaded and compiled
-  http://www.vlfeat.org/matconvnet/download/matconvnet-1.0-beta15.tar.gz
+- MatConvNet MATLAB toolbox 1.0-beta25 is automatically downloaded and compiled
+  http://www.vlfeat.org/matconvnet/download/matconvnet-1.0-beta25.tar.gz
 
 - Pre-trained CNN models. In our paper we have used AlexNet and VGG16. The mat files containing the models are downloaded in the code. The current files on matconvnet website are slightly different from the ones we used (older versions downloaded from matconvnet website).
+
+- The code is tested with MATLAB 9.2 (R2017a) on Linux.
 
 ## Execution
 
